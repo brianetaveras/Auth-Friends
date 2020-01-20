@@ -3,10 +3,12 @@ import styled from 'styled-components';
 import axios from 'axios';
 
 import FriendCard from '../components/FriendCard';
+import AddModal from '../components/AddModal';
 
 const Home = ()=> {
 
     const [friends, setFriends] = useState([])
+    const [AddModalOpen, setModalOpen] = useState(false)
 
     useEffect(()=>{
         axios.get('http://localhost:5000/api/friends', {
@@ -14,7 +16,6 @@ const Home = ()=> {
                 Authorization: localStorage.getItem('token')
             }
         }).then(res=>{
-            console.log(res)
             setFriends(res.data)
         })
     }, [])
@@ -35,14 +36,14 @@ const Home = ()=> {
         cursor: pointer;
 
     `
-
     return (
         <div className="home">
+          {AddModalOpen ?  <AddModal setFriends={setFriends} setModalOpen={setModalOpen}/> : ''}
             <h1>Welcome to your friend list</h1>
             {friends.length ? friends.map(friend=>{
                 return <FriendCard info={friend} setFriends={setFriends} key={friend.id} />
             }): 'You got not friends'}
-            <AddButton>+</AddButton>
+<AddButton onClick={()=>{setModalOpen(!AddModalOpen)}}>{AddModalOpen ? 'x' : '+'}</AddButton>
         </div>
     );
 
